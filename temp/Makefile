@@ -1,7 +1,7 @@
-PROJECT_ROOT="../../"
+PROJECT_ROOT=../../
 BASENAME = $(shell basename $(CURDIR))
 CXX = g++
-CXXFLAGS = -I. -Wall -Wextra -O0 -g3 -std=c++17
+CXXFLAGS = -I. -Wall -Wextra -Ofast -g3 -std=c++23
 HELPER=$(PROJECT_ROOT)lib/helper
 .MAIN: output
 

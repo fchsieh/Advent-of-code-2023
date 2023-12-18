@@ -8,7 +8,7 @@ using namespace std;
 #define TRUE  1
 #define FALSE 0
 
-int64_t solve_1(const string &input);
-int64_t solve_2(const string &input);
+uint64_t solve_1(const string &input);
+uint64_t solve_2(const string &input);
 
 #endif

@@ -2,12 +2,12 @@
 #include <gtest/gtest.h>
 using namespace std;
 
-int solve_1(const string &input)
+int64_t solve_1(const string &input)
 {
     return 0;
 }
 
-int solve_2(const string &input)
+int64_t solve_2(const string &input)
 {
     return 0;
 }
