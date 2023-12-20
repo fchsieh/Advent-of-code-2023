@@ -1,11 +1,9 @@
 #include "Day_05.hh"
-#include "../../lib/helper.hh"
-#include <gtest/gtest.h>
 using namespace std;
 
 #define DATA_ENTRY vector<uint64_t>
-
-#define MAP_TABLE unordered_map<string, vector<DATA_ENTRY>>
+#define MAP_TABLE  unordered_map<string, vector<DATA_ENTRY>>
+ThreadPool POOL(12);
 
 uint64_t lookupHelper(MAP_TABLE &map, string mapStr, uint64_t target)
 {
@@ -116,7 +114,10 @@ uint64_t findLocation(const string &input,
     }
 
     for (auto &seed : seeds)
-        ans = min(ans, lookup(table, seed));
+    {
+        auto res = POOL.enqueue(lookup, table, seed);
+        ans      = min(ans, res.get());
+    }
 
     return ans;
 }

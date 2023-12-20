@@ -33,5 +33,4 @@
 
 .vscode
 run
-input
-**/Day_*/Makefile
+.cache

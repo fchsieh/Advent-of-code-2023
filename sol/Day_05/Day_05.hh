@@ -1,6 +1,10 @@
 #ifndef __HEADER_H__
 #define __HEADER_H__
+#include "../../lib/ThreadPool.hh"
+#include "../../lib/helper.hh"
 #include <bits/stdc++.h>
+#include <gtest/gtest.h>
+#include <pthread.h>
 using namespace std;
 
 #define OK    0
