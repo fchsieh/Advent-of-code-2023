@@ -1,5 +1,4 @@
 #include "temp.hh"
-#include <gtest/gtest.h>
 using namespace std;
 
 uint64_t solve_1(const string &input)
