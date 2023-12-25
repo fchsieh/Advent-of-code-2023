@@ -11,3 +11,13 @@ extern std::string COORD_TO_KEY(const int r, const int c)
     snprintf(str, 1024, "(%c, %c)", r, c);
     return std::string(str);
 }
+
+extern inline uint64_t GCD(uint64_t a, uint64_t b)
+{
+    return b == 0 ? a : GCD(b, a % b);
+}
+
+extern inline uint64_t LCM(uint64_t a, uint64_t b)
+{
+    return a * b / LCM(a, b);
+}
