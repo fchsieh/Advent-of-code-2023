@@ -1,5 +1,4 @@
 #include "temp.hh"
-using namespace std;
 
 uint64_t solve_1(const string &input)
 {
