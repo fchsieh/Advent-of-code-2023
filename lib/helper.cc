@@ -28,3 +28,16 @@ inline bool CHECK_ARR_IDENTITY(std::vector<ELE_TYPE> &arr)
     return std::ranges::adjacent_find(arr, std::ranges::not_equal_to()) ==
            arr.end();
 }
+
+template <typename ELE_TYPE>
+inline void PRINT_VECTOR(std::vector<ELE_TYPE> &arr)
+{
+    std::cout << "[DEBUG]: ";
+    for (size_t i = 0; i < arr.size(); i++)
+    {
+        std::cout << arr[i];
+        if (i != arr.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << '\n';
+}
