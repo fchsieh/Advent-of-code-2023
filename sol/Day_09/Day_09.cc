@@ -42,9 +42,8 @@ int64_t solve_2(const string &input)
     stringstream    ss(input);
     string          line, tok;
     vector<int64_t> currLine;
-    int64_t         currFirst = 0;
-    int64_t         prevFirst = 0;
-    int64_t         ans = 0, currAns = 0;
+    stack<int64_t>  frontRecord;
+    int64_t         currFirst = 0, ans = 0;
 
     while (getline(ss, line))
     {
@@ -59,9 +58,15 @@ int64_t solve_2(const string &input)
 
         while (!CHECK_ARR_IDENTITY(currLine))
         {
+            frontRecord.push(currLine.front());
             currFirst = computeDiff(currLine, true);
         }
-        ans += currAns;
+        while (!frontRecord.empty())
+        {
+            currFirst = frontRecord.top() - currFirst;
+            frontRecord.pop();
+        }
+        ans += currFirst;
     }
 
     return ans;
