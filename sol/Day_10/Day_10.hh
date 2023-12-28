@@ -58,6 +58,6 @@ enum DIRECTIONS
     }
 
 uint64_t solve_1(const string &input);
-uint64_t solve_2(const string &input);
+int64_t  solve_2(const string &input);
 
 #endif

@@ -23,22 +23,17 @@ vector<vector<int>> GET_FOUR_DIRECTIONS(int r, int c, int rMax, int cMax)
     return tmp;
 }
 
-void moveAgent(char pipe, vector<int> &agent)
-{
-    MOVE[pipe](agent);
-}
-
-uint64_t solve_1(const string &input)
+tuple<vector<vector<char>>, pair<int, int>, vector<vector<int>>> getData(
+    const string &input)
 {
     stringstream         ss(input), ssLine;
     string               line;
     char                 tok;
     vector<char>         currRow;
+    int                  row = 0, col = 0;
     vector<vector<char>> MAP; // MAP[row][col] = pipe
     pair<int, int>       START = {0, 0};
     vector<vector<int>>  MOVING_AGENT;
-    int                  row = 0, col = 0;
-    uint64_t             steps = 0;
 
     while (getline(ss, line))
     {
@@ -128,23 +123,63 @@ uint64_t solve_1(const string &input)
         if (MOVING_AGENT.size() == 2)
             break;
     }
+    return {MAP, START, MOVING_AGENT};
+}
+
+uint64_t solve_1(const string &input)
+{
+    auto [MAP, START, MOVING_AGENT] = getData(input);
+    char     pipe1, pipe2;
+    uint64_t steps = 1;
 
     while (MOVING_AGENT[0][0] != MOVING_AGENT[1][0] ||
            MOVING_AGENT[0][1] != MOVING_AGENT[1][1])
     {
-        moveAgent(MAP[MOVING_AGENT[0][0]][MOVING_AGENT[0][1]], MOVING_AGENT[0]);
-        moveAgent(MAP[MOVING_AGENT[1][0]][MOVING_AGENT[1][1]], MOVING_AGENT[1]);
+        pipe1 = MAP[MOVING_AGENT[0][0]][MOVING_AGENT[0][1]];
+        pipe2 = MAP[MOVING_AGENT[1][0]][MOVING_AGENT[1][1]];
+        MOVE[pipe1](MOVING_AGENT[0]);
+        MOVE[pipe2](MOVING_AGENT[1]);
         steps++;
     }
-    return steps + 1;
+    return steps;
 }
 
-uint64_t solve_2(const string &input)
+int64_t solve_2(const string &input)
 {
+    auto [MAP, START, MOVING_AGENT] = getData(input);
+    vector<pair<int, int>> polygon  = {
+        {START.first, START.second}
+    };
+    int64_t     area = 0, boundaryCount = 1;
+    vector<int> currPos = MOVING_AGENT[0];
+    char        pipe;
+
     // find all points on the loop
-    // start walk: find starting points that is on RHS of the loop
-    // for each starting points, run bfs to count # of points within the loop
-    return 0;
+    while (currPos[0] != START.first || currPos[1] != START.second)
+    {
+        if (unordered_set<char>({'F', 'J', '7', 'L'})
+                .contains(MAP[currPos[0]][currPos[1]]))
+        {
+            polygon.push_back({currPos[0], currPos[1]});
+        }
+        pipe = MAP[currPos[0]][currPos[1]];
+        MOVE[pipe](currPos);
+        boundaryCount++;
+    }
+
+    // b = # of points on loop
+    // Pick's theorem:   A = i + b/2 - 1  ==> i = A - b/2 + 1,
+    // Shoelace formula: 1/2 * sum((x_i * y_i+1) - (x_i+1 * y_i))
+
+    for (int i = 0; i < (int)polygon.size(); i++)
+    {
+        auto [currY, currX] = polygon[i];
+        auto [nextY, nextX] = polygon[(i + 1) % polygon.size()];
+        area += (currX * nextY) - (currY * nextX);
+    }
+    area = abs(area) / 2;
+
+    return area - boundaryCount / 2 + 1;
 }
 
 TEST(Aoc2023Test, Problem1)
