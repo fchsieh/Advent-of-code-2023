@@ -16,4 +16,4 @@ jobs:
     - name: Build main
       run: make
     - name: Run GTest
-      run: ./run -t all
+      run: ./run -a
