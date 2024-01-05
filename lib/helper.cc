@@ -1,8 +1,16 @@
-#include "helper.hh"
+#include <bits/stdc++.h>
 
 inline bool stringIsNumber(const std::string &s)
 {
     return s.find_first_not_of("0123456789") == std::string::npos;
+}
+
+std::string STRING_ARR_TO_KEY(const std::vector<std::string> &arr)
+{
+    std::string key;
+    for (size_t i = 0; i < arr.size(); i++)
+        key += arr[i] + (i == arr.size() - 1 ? "" : "-");
+    return key;
 }
 
 std::string COORD_TO_KEY(const int r, const int c)

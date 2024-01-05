@@ -33,12 +33,12 @@ download() {
         exit 1
     fi
     # Check if cookie is set
-    if [[ -z "$AOC_SESSION_COOKIE" ]]; then
-        echo "[🎄 ERROR] No 🍪 found! run aocd-token and then set AOC_SESSION_COOKIE"
+    if [[ -z "$AOC_SESSION" ]]; then
+        echo "[🎄 ERROR] No 🍪 found! run aocd-token and then set AOC_SESSION"
         exit 1
     fi
     # Download input
-    curl "${PUZZLE_URL}" -H "cookie: session=${AOC_SESSION_COOKIE}" -o "${OUTPUT}" 2>/dev/null
+    curl "${PUZZLE_URL}" -H "cookie: session=${AOC_SESSION}" -o "${OUTPUT}" 2>/dev/null
 }
 
 setup() {
