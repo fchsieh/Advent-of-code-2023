@@ -16,21 +16,28 @@ string readFile(const string &file)
 
 void usage(char *prog)
 {
-    printf("Usage: %s [day] [-t | --test]\n", prog);
-    printf("    -t | --test : run all tests\n");
+    printf("Usage: %s <day> [-t | -a]\n", prog);
     printf("    day         : run specific day\n");
+    printf("    -t          : run test on day\n");
+    printf("    -a          : run all tests\n");
 }
 
-void parseArg(int argc, char **argv, bool &isTest, int &day, string &input)
+void parseArg(int argc, char **argv, bool &isTest, bool &runAll, int &day,
+              string &input)
 {
     vector<string> arguments(argv, argv + argc);
     char          *file = new char[1024];
 
     for (auto arg : arguments)
     {
-        if (arg == "-t" || arg == "--test")
+        if (arg == "-t")
             isTest = true;
-        if (stringIsNumber(arg))
+        else if (arg == "-a")
+        {
+            runAll = true;
+            return;
+        }
+        else if (stringIsNumber(arg))
             day = stoi(arg);
     }
 
@@ -40,19 +47,33 @@ void parseArg(int argc, char **argv, bool &isTest, int &day, string &input)
 
 int main(int argc, char *argv[])
 {
-    bool   runTest = false;
+    bool   runTest = false, runAll = false;
     int    day     = 1;
     int    res;
     string input;
 
-    if ((argc == 1 || argc > 3) ||
-        (argc == 2 && !stringIsNumber(string(argv[1]))))
+    if (argc == 1 || argc > 3)
     {
         usage(argv[0]);
         return ERROR;
     }
+    else if (argc == 2)
+    {
+        if (!stringIsNumber(string(argv[1])) && strcmp(argv[1], "-a") != 0)
+        {
+            usage(argv[0]);
+            return ERROR;
+        }
+    }
 
-    parseArg(argc, argv, runTest, day, input);
+    parseArg(argc, argv, runTest, runAll, day, input);
+
+    if (runAll)
+    {
+        // run gtest
+        testing::InitGoogleTest(&argc, argv);
+        return RUN_ALL_TESTS();
+    }
 
     if (!dayMap.count(day))
     {
