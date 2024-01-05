@@ -1,7 +1,6 @@
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef __DAY_8_HEADER_H__
+#define __DAY_8_HEADER_H__
 #include <bits/stdc++.h>
-#include <cstdint>
 #include <gtest/gtest.h>
 using namespace std;
 
@@ -17,7 +16,6 @@ using namespace std;
 #define FINISH_ITER(arr)                                                       \
     (all_of(arr.begin(), arr.end(), [](string s) { return s[2] == 'Z'; }))
 
-uint64_t solve_1(const string &input);
-uint64_t solve_2(const string &input);
+int day8(int argc, char **argv, string input, bool runTest);
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef __DAY_10_HEADER_H__
+#define __DAY_10_HEADER_H__
 #include "../../lib/helper.cc"
 #include <bits/stdc++.h>
 #include <gtest/gtest.h>
@@ -57,7 +57,6 @@ enum DIRECTIONS
         FROM = (FROM == SOUTH) ? WEST : NORTH;                                 \
     }
 
-uint64_t solve_1(const string &input);
-int64_t  solve_2(const string &input);
+int day10(int argc, char **argv, string input, bool runTest);
 
 #endif

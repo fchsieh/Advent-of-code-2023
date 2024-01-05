@@ -1,7 +1,5 @@
 #include "Day_06.hh"
-#include <gtest/gtest.h>
-#include <sstream>
-#include <string>
+
 using namespace std;
 
 uint64_t ways(uint64_t time, uint64_t dist)
@@ -17,7 +15,7 @@ uint64_t ways(uint64_t time, uint64_t dist)
     return way;
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     stringstream                     ss(input);
     string                           line, tok;
@@ -56,7 +54,7 @@ uint64_t solve_1(const string &input)
     return ans;
 }
 
-uint64_t solve_2(const string &input)
+static uint64_t solve_2(const string &input)
 {
     stringstream ss(input);
     string       line, tok, timeTok = "", distTok = "";
@@ -85,48 +83,24 @@ uint64_t solve_2(const string &input)
 
 string testStr = "Time:      7  15   30\nDistance:  9  40  200";
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day6, Problem1)
 {
     EXPECT_EQ(288, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day6, Problem2)
 {
     EXPECT_EQ(71503, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day6(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day6.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_06.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

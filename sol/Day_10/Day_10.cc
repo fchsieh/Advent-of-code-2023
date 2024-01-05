@@ -23,7 +23,7 @@ vector<vector<int>> GET_FOUR_DIRECTIONS(int r, int c, int rMax, int cMax)
     return tmp;
 }
 
-tuple<vector<vector<char>>, pair<int, int>, vector<vector<int>>> getData(
+static tuple<vector<vector<char>>, pair<int, int>, vector<vector<int>>> getData(
     const string &input)
 {
     stringstream         ss(input), ssLine;
@@ -126,7 +126,7 @@ tuple<vector<vector<char>>, pair<int, int>, vector<vector<int>>> getData(
     return {MAP, START, MOVING_AGENT};
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     auto [MAP, START, MOVING_AGENT] = getData(input);
     char     pipe1, pipe2;
@@ -144,7 +144,7 @@ uint64_t solve_1(const string &input)
     return steps;
 }
 
-int64_t solve_2(const string &input)
+static int64_t solve_2(const string &input)
 {
     auto [MAP, START, MOVING_AGENT] = getData(input);
     vector<pair<int, int>> polygon  = {
@@ -182,7 +182,7 @@ int64_t solve_2(const string &input)
     return area - boundaryCount / 2 + 1;
 }
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day10, Problem1)
 {
     map<string, uint64_t> tests = {
         {".....\n.S-7.\n.|.|.\n.L-J.\n.....\n", 4},
@@ -192,7 +192,7 @@ TEST(Aoc2023Test, Problem1)
         EXPECT_EQ(res, solve_1(test));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day10, Problem2)
 {
     map<string, uint64_t> tests = {
         // clang-format off
@@ -215,38 +215,14 @@ TEST(Aoc2023Test, Problem2)
         EXPECT_EQ(res, solve_2(test));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day10(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day10.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_10.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

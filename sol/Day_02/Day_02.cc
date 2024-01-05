@@ -1,6 +1,5 @@
 #include "Day_02.hh"
-#include "../../lib/helper.hh"
-#include <gtest/gtest.h>
+
 using namespace std;
 
 #define VALID_BAG(_BAG, _RED, _BLUE, _GREEN)                                   \
@@ -59,7 +58,7 @@ vector<vector<int>> p1_parser(const string &input)
     return res;
 }
 
-int solve_1(const string &input)
+static int solve_1(const string &input)
 {
     vector<vector<int>> parsedInput = p1_parser(input);
     int                 ans         = 0;
@@ -72,7 +71,7 @@ int solve_1(const string &input)
     return ans;
 }
 
-int solve_2(const string &input)
+static int solve_2(const string &input)
 {
     vector<vector<int>> parsedInput = p1_parser(input);
     int                 ans         = 0;
@@ -87,7 +86,7 @@ int solve_2(const string &input)
     return ans;
 }
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day2, Problem1)
 {
     string
         testStr = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 "
@@ -99,7 +98,7 @@ TEST(Aoc2023Test, Problem1)
     EXPECT_EQ(8, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day2, Problem2)
 {
     string
         testStr = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 "
@@ -111,38 +110,14 @@ TEST(Aoc2023Test, Problem2)
     EXPECT_EQ(2286, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day2(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day2.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_02.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

@@ -1,6 +1,8 @@
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef __DAY_2_HEADER_H__
+#define __DAY_2_HEADER_H__
+#include "../../lib/helper.cc"
 #include <bits/stdc++.h>
+#include <gtest/gtest.h>
 using namespace std;
 
 #define OK    0
@@ -15,7 +17,6 @@ typedef enum
     GREEN
 } CUBES;
 
-int solve_1(const string &input);
-int solve_2(const string &input);
+int day2(int argc, char **argv, string input, bool runTest);
 
 #endif

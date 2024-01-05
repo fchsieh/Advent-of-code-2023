@@ -1,5 +1,4 @@
 #include "Day_11.hh"
-#include "../../lib/helper.cc"
 
 struct Coord
 {
@@ -25,7 +24,8 @@ uint inRange(vector<int> &arr, int lo, int hi)
         arr, [&lo, &hi](int value) { return lo <= value && value <= hi; });
 }
 
-tuple<vector<Coord>, vector<int>, vector<int>> getData(const string &input)
+static tuple<vector<Coord>, vector<int>, vector<int>> getData(
+    const string &input)
 {
     stringstream         ss(input), ssLine;
     string               line;
@@ -82,7 +82,7 @@ tuple<vector<Coord>, vector<int>, vector<int>> getData(const string &input)
     return {galaxies, rowsToExpand, colsToExpand};
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     auto [galaxies, rowsToExpand, colsToExpand] = getData(input);
     uint64_t ans                                = 0;
@@ -97,7 +97,7 @@ uint64_t solve_1(const string &input)
     return ans;
 }
 
-uint64_t solve_2(const string &input, int expandTo = 1)
+static uint64_t solve_2(const string &input, int expandTo = 1)
 {
     auto [galaxies, rowsToExpand, colsToExpand] = getData(input);
     uint64_t ans                                = 0;
@@ -113,52 +113,29 @@ uint64_t solve_2(const string &input, int expandTo = 1)
     return ans;
 }
 
-string testStr = "...#......\n.......#..\n#.........\n..........\n......#.."
-                 ".\n.#........\n.........#\n..........\n.......#..\n#...#."
-                 "....\n";
-TEST(Aoc2023Test, Problem1)
+static string
+    testStr = "...#......\n.......#..\n#.........\n..........\n......#.."
+              ".\n.#........\n.........#\n..........\n.......#..\n#...#."
+              "....\n";
+TEST(Aoc2023Test_day11, Problem1)
 {
     EXPECT_EQ(374, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day11, Problem2)
 {
     EXPECT_EQ(1030, solve_2(testStr, 10));
     EXPECT_EQ(8410, solve_2(testStr, 100));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day11(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day11.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_11.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

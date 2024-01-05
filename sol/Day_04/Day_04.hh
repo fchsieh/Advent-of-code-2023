@@ -1,6 +1,7 @@
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef __DAY_4_HEADER_H__
+#define __DAY_4_HEADER_H__
 #include <bits/stdc++.h>
+#include <gtest/gtest.h>
 using namespace std;
 
 #define OK    0
@@ -8,7 +9,6 @@ using namespace std;
 #define TRUE  1
 #define FALSE 0
 
-int64_t solve_1(const string &input);
-int64_t solve_2(const string &input);
+int day4(int argc, char **argv, string input, bool runTest);
 
 #endif

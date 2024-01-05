@@ -1,5 +1,5 @@
-#ifndef __HEADER_H__
-#define __HEADER_H__
+#ifndef __DAY_XX_HEADER_H__
+#define __DAY_XX_HEADER_H__
 #include "../../lib/helper.cc"
 #include <bits/stdc++.h>
 #include <gtest/gtest.h>
@@ -10,7 +10,6 @@ using namespace std;
 #define TRUE  1
 #define FALSE 0
 
-uint64_t solve_1(const string &input);
-uint64_t solve_2(const string &input);
+int dayXX(int argc, char **argv, string input, bool runTest);
 
 #endif

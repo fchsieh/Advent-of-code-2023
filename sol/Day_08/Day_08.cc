@@ -1,5 +1,4 @@
 #include "Day_08.hh"
-using namespace std;
 
 #define MAP_TABLE unordered_map<string, vector<string>>
 
@@ -45,7 +44,7 @@ tuple<MAP_TABLE, vector<char>, vector<string>> getMapTable(const string &input)
     return {map, instructions, startPos};
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     string   currPos  = "AAA";
     uint64_t steps    = 0;
@@ -64,7 +63,7 @@ uint64_t solve_1(const string &input)
     return steps;
 }
 
-uint64_t solve_2(const string &input)
+static uint64_t solve_2(const string &input)
 {
     string      currPos;
     uint64_t    ans = 1, steps;
@@ -94,7 +93,7 @@ uint64_t solve_2(const string &input)
     return ans;
 }
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day8, Problem1)
 {
     string testStr1 = "RL\n\nAAA = (BBB, CCC)\nBBB = (DDD, EEE)\nCCC = (ZZZ, "
                       "GGG)\nDDD = (DDD, DDD)\nEEE = (EEE, EEE)\nGGG = (GGG, "
@@ -105,7 +104,7 @@ TEST(Aoc2023Test, Problem1)
     EXPECT_EQ(6, solve_1(testStr2));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day8, Problem2)
 {
     string testStr = "LR\n\n11A = (11B, XXX)\n11B = (XXX, 11Z)\n11Z = (11B, "
                      "XXX)\n22A = (22B, XXX)\n22B = (22C, 22C)\n22C = (22Z, "
@@ -113,38 +112,14 @@ TEST(Aoc2023Test, Problem2)
     EXPECT_EQ(6, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day8(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day8.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_08.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

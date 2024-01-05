@@ -17,13 +17,16 @@ uint64_t dfs(size_t pos, size_t currentRecord, int streak, const string &puzzle,
     if (pos == puzzle.size()) // out of bounds and records not consumed yet
         return 0;
 
-    string key = STRING_ARR_TO_KEY({
+    vector<string> keyArr = {
         puzzle,
         to_string(*record.begin()),
         to_string(pos),
         to_string(currentRecord),
         to_string(streak),
-    });
+    };
+
+    string key;
+    STRING_ARR_TO_KEY(keyArr, key);
 
     uint64_t ways = 0;
 
@@ -63,7 +66,7 @@ uint64_t dfs(size_t pos, size_t currentRecord, int streak, const string &puzzle,
     return cache[key] = ways;
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     stringstream                      ss(input);
     string                            line;
@@ -111,7 +114,7 @@ vector<int> unfoldGroup(vector<int> v)
     return res;
 }
 
-uint64_t solve_2(const string &input)
+static uint64_t solve_2(const string &input)
 {
     stringstream                      ss(input);
     string                            line;
@@ -140,51 +143,27 @@ uint64_t solve_2(const string &input)
     return ans;
 }
 
-string testStr = "???.### 1,1,3\n.??..??...?##. 1,1,3\n?#?#?#?#?#?#?#? "
-                 "1,3,1,6\n????.#...#... 4,1,1\n????.######..#####. "
-                 "1,6,5\n?###???????? 3,2,1\n";
-TEST(Aoc2023Test, Problem1)
+static string testStr = "???.### 1,1,3\n.??..??...?##. 1,1,3\n?#?#?#?#?#?#?#? "
+                        "1,3,1,6\n????.#...#... 4,1,1\n????.######..#####. "
+                        "1,6,5\n?###???????? 3,2,1\n";
+TEST(Aoc2023Test_day12, Problem1)
 {
     EXPECT_EQ(21, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day12, Problem2)
 {
     EXPECT_EQ(525152, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day12(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day12.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_12.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

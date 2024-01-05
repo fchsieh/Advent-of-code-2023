@@ -122,12 +122,12 @@ uint64_t findLocation(const string &input,
     return ans;
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     return findLocation(input, &p1_seed);
 }
 
-uint64_t solve_2(const string &input)
+static uint64_t solve_2(const string &input)
 {
     return findLocation(input, &p2_seed);
 }
@@ -141,48 +141,24 @@ const string
               "64 13\n\ntemperature-to-humidity map:\n0 69 1\n1 0 "
               "69\n\nhumidity-to-location map:\n60 56 37\n56 93 4\n";
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day5, Problem1)
 {
     EXPECT_EQ(35, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day5, Problem2)
 {
     EXPECT_EQ(46, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day5(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day5.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_05.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

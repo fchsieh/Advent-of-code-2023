@@ -1,5 +1,36 @@
 #include "Day_07.hh"
-using namespace std;
+
+unordered_map<char, int> LABEL_P1 = {
+    {'2',  0},
+    {'3',  1},
+    {'4',  2},
+    {'5',  3},
+    {'6',  4},
+    {'7',  5},
+    {'8',  6},
+    {'9',  7},
+    {'T',  8},
+    {'J',  9},
+    {'Q', 10},
+    {'K', 11},
+    {'A', 12},
+};
+
+unordered_map<char, int> LABEL_P2 = {
+    {'J', -1},
+    {'2',  0},
+    {'3',  1},
+    {'4',  2},
+    {'5',  3},
+    {'6',  4},
+    {'7',  5},
+    {'8',  6},
+    {'9',  7},
+    {'T',  8},
+    {'Q', 10},
+    {'K', 11},
+    {'A', 12},
+};
 
 int getCardType(string &card, int part2)
 {
@@ -113,59 +144,36 @@ uint64_t getResult(const string &input, unordered_map<char, int> &LABEL,
     return ans;
 }
 
-uint64_t solve_1(const string &input)
+static uint64_t solve_1(const string &input)
 {
     return getResult(input, LABEL_P1, FALSE);
 }
 
-uint64_t solve_2(const string &input)
+static uint64_t solve_2(const string &input)
 {
     return getResult(input, LABEL_P2, TRUE);
 }
 
-string testStr = "32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483\n";
-TEST(Aoc2023Test, Problem1)
+static string
+    testStr = "32T3K 765\nT55J5 684\nKK677 28\nKTJJT 220\nQQQJA 483\n";
+TEST(Aoc2023Test_day7, Problem1)
 {
     EXPECT_EQ(6440, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day7, Problem2)
 {
     EXPECT_EQ(5905, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day7(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day7.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_07.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

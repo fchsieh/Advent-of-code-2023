@@ -1,12 +1,10 @@
 #include "Day_01.hh"
-#include <gtest/gtest.h>
-#include <iterator>
-#include <sstream>
+
 using namespace std;
 
 #define FIND_DIGIT [](char c) { return std::isdigit(c) && c != '0'; }
 
-int solve_1(const string &input)
+static int solve_1(const string &input)
 {
     stringstream ss(input);
     int          ans   = 0;
@@ -25,7 +23,7 @@ int solve_1(const string &input)
     return ans;
 }
 
-int solve_2(const string &input)
+static int solve_2(const string &input)
 {
     stringstream               ss(input);
     int                        ans   = 0;
@@ -97,51 +95,27 @@ int solve_2(const string &input)
     return ans;
 }
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day1, Problem1)
 {
     string testStr = "1abc2\npqr3stu8vwx\na1b2c3d4e5f\ntreb7uchet\n";
     EXPECT_EQ(142, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day1, Problem2)
 {
     string testStr = "two1nine\neightwothree\nabcone2threexyz\nxtwone3four\n4ni"
                      "neeightseven2\nzoneight234\n7pqrstsixteen\n";
     EXPECT_EQ(281, solve_2(testStr));
 }
 
-// ===================================================
-// ========== Utils and solving the problem ==========
-// ===================================================
-string readFile(const string &file)
+int day1(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day1.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_01.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";

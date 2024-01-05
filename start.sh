@@ -51,13 +51,21 @@ setup() {
         echo "[🎄 ERROR] Directory Day_${DAY_FORMATTED} has already been created!"
         exit 1
     fi
+    FILE="sol/Day_${DAY_FORMATTED}/Day_${DAY_FORMATTED}"
     # Setup environment
     mkdir -p "sol/Day_${DAY_FORMATTED}"
-    cp temp/temp.cc "sol/Day_${DAY_FORMATTED}/Day_${DAY_FORMATTED}.cc"
-    cp temp/temp.hh "sol/Day_${DAY_FORMATTED}/Day_${DAY_FORMATTED}.hh"
-    cp temp/Makefile "sol/Day_${DAY_FORMATTED}/Makefile"
-    # replace header file for day X
-    sed -i "s/temp/Day_${DAY_FORMATTED}/g" "sol/Day_${DAY_FORMATTED}/Day_${DAY_FORMATTED}.cc"
+    cp temp/temp.cc "${FILE}.cc"
+    cp temp/temp.hh "${FILE}.hh"
+    # replace day number
+    sed -i "s/temp/Day_${DAY_FORMATTED}/g" "${FILE}.cc"
+    sed -i "s/dayXX/day${DAY_FORMATTED}/g" "${FILE}.cc"
+    sed -i "s/dayXX/day${DAY_FORMATTED}/g" "${FILE}.hh"
+    sed -i "s/DAY_XX/DAY_${DAY_FORMATTED}/g" "${FILE}.hh"
+
+    # insert solver to header
+    sed -i "s:// TMP_H:#include \"${FILE}.hh\"\n// TMP_H:g" "sol.hh"
+    # insert entry
+    sed -i "s:// TMP_ENTRY:   \{${DAY}, \&day${DAY}\},\n // TMP_ENTRY:g" "sol.hh"
 
     # Finished!
     echo "[🎅 SUCCESS] You can now begin your coding!"

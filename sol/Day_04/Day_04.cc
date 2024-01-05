@@ -1,5 +1,5 @@
 #include "Day_04.hh"
-#include <gtest/gtest.h>
+
 using namespace std;
 
 // for problem 2
@@ -10,7 +10,7 @@ inline int winningNums(const unordered_set<string> &card, const string &cur)
     return card.contains(cur);
 }
 
-int64_t solve_1(const string &input)
+static int64_t solve_1(const string &input)
 {
     stringstream          ss(input);
     string                line, tok;
@@ -61,7 +61,7 @@ int64_t solve_1(const string &input)
     return ans;
 }
 
-int64_t solve_2(const string &input)
+static int64_t solve_2(const string &)
 {
     int64_t     ans    = 0;
     int         idx    = 0;
@@ -80,7 +80,7 @@ int64_t solve_2(const string &input)
     return ans;
 }
 
-TEST(Aoc2023Test, Problem1)
+TEST(Aoc2023Test_day4, Problem1)
 {
     string testStr = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53\nCard "
                      "2: 13 32 20 16 61 |\n61 30 68 82 17 32 24 19 Card 3 : 1 "
@@ -94,44 +94,20 @@ TEST(Aoc2023Test, Problem1)
     EXPECT_EQ(13, solve_1(testStr));
 }
 
-TEST(Aoc2023Test, Problem2)
+TEST(Aoc2023Test_day4, Problem2)
 {
     string testStr = ""; // not used
     EXPECT_EQ(30, solve_2(testStr));
 }
 
-// ========================================================================
-// ===================== Utils and helper functions  ======================
-// ========================================================================
-string readFile(const string &file)
+int day4(int argc, char **argv, string input, bool runTest)
 {
-    ifstream inputFile;
-    inputFile.open(file);
-    if (inputFile.is_open())
-    {
-        stringstream buffer;
-        string       res((std::istreambuf_iterator<char>(inputFile)),
-                         std::istreambuf_iterator<char>());
-        return res;
-    }
-    return "";
-}
-
-int main(int argc, char **argv)
-{
-    if (argc > 1 && strcmp(argv[1], "test") == 0)
+    if (runTest)
     {
         // run gtest
         testing::InitGoogleTest(&argc, argv);
+        testing::GTEST_FLAG(filter) = "Aoc2023Test_day4.*";
         return RUN_ALL_TESTS();
-    }
-
-    // Start solving the actual problem, read the input
-    string input = readFile("../../input/Day_04.txt");
-    if (input.empty())
-    {
-        cerr << "ERROR: Input is empty! Check the input file again.\n";
-        return ERROR;
     }
 
     cout << "==== Start solving today's problem...====\n";
