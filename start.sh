@@ -32,6 +32,10 @@ download() {
         echo "[🎄 ERROR] Input Day_${DAY_FORMATTED} has already been created!"
         exit 1
     fi
+    # Try to read cookie from .env
+    if [[ -f ".env" ]]; then
+        source .env
+    fi
     # Check if cookie is set
     if [[ -z "$AOC_SESSION" ]]; then
         echo "[🎄 ERROR] No 🍪 found! run aocd-token and then set AOC_SESSION"
