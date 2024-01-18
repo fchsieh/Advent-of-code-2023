@@ -10,6 +10,22 @@ using namespace std;
 #define TRUE  1
 #define FALSE 0
 
+enum MODULETYPE
+{
+    FLIPFLOP = 0,
+    CONJUNCTION,
+    BROADCASTER
+};
+
+enum PULSE
+{
+    LOW = 0, // equivalent to "OFF"
+    HIGH     // equivalent to "ON"
+};
+
+#define STATE_OFF LOW
+#define STATE_ON  HIGH
+
 int day20(int argc, char **argv, string input, bool runTest);
 
 #endif

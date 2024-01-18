@@ -1,73 +1,23 @@
 #include "Day_20.hh"
 
-enum MODULETYPE
-{
-    FLIPFLOP = 0,
-    CONJUNCTION,
-    BROADCASTER
-};
-
-enum PULSE
-{
-    LOW = 0, // equivalent to "OFF"
-    HIGH     // equivalent to "ON"
-};
-
-#define OFF LOW
-#define ON  HIGH
+// #define DEBUG
 
 class Module
 {
-
   public:
-    // Module characteristics
-    string     name;
-    PULSE      state = LOW;
-    MODULETYPE type;
-    // from -> module -> sendTo
-    vector<string> sendTo;
-    set<string>    from;
-    // runs when receiving input
-    function<void(PULSE, unordered_map<string, any> &)> func;
+    string             name      = "";
+    map<string, PULSE> registers = {}; // for conjunction: <from : recent pulse>
+    PULSE              state     = STATE_OFF;
+    vector<string>     to        = {};
+    MODULETYPE         type      = BROADCASTER;
 
-    Module(string name, MODULETYPE type, vector<string> to)
+    Module() = default;
+
+    Module(MODULETYPE t, string n, vector<string> sendList)
     {
-        this->name   = name;
-        this->type   = type;
-        this->sendTo = vector<string>(to);
-
-        switch (type)
-        {
-        case FLIPFLOP:
-            func = [this](PULSE input, unordered_map<string, any> &map) {
-                if (input == LOW)
-                {
-                    if (this->state == ON)
-                    {
-                        // send low pulse
-                        for (auto &dest : sendTo)
-                            any_cast<Module>(&map[dest])->func(LOW, map);
-                    }
-                    else
-                    {
-                        // send high pulse
-                        for (auto &dest : sendTo)
-                            any_cast<Module>(&map[dest])->func(HIGH, map);
-                    }
-                    // flip current state
-                    this->state = PULSE(!this->state);
-                }
-            };
-            break;
-        case CONJUNCTION:
-            break;
-        case BROADCASTER:
-            func = [this](PULSE input, unordered_map<string, any> &map) {
-                for (auto &dest : sendTo)
-                    any_cast<Module>(&map[dest])->func(input, map);
-            };
-            break;
-        }
+        type = t;
+        name = n;
+        to   = vector<string>(sendList);
     }
 };
 
@@ -77,42 +27,188 @@ ostream &operator<<(ostream &out, Module &mod)
                           ? "Flip-flop"
                           : (mod.type == BROADCASTER ? "Broadcaster"
                                                      : "Conjunction"));
-    out << "[" << modType << "], name '" << mod.name << "', send list = ";
-    for (size_t i = 0; i < mod.sendTo.size(); i++)
-        out << mod.sendTo[i] << ((i == mod.sendTo.size() - 1) ? "" : ", ");
+    out << "=============  " << mod.name << "  =============\n";
+    out << "Type:      " << modType << '\n';
+    out << "State:     " << (mod.state == LOW ? "LOW" : "HIGH") << '\n';
+    out << "SendList:  ";
+    for (size_t i = 0; i < mod.to.size(); i++)
+        out << mod.to[i] << ((i == mod.to.size() - 1) ? "" : ", ");
+    out << "\nRegisters: ";
+    for (auto [r, val] : mod.registers)
+        out << "[" << r << ": " << (val == LOW ? "LO" : "HI") << "] ";
+    out << '\n';
     return out;
 }
 
-static uint64_t solve_1(const string &input)
+tuple<MODULETYPE, string, vector<string>> parseLine(string line)
 {
-    stringstream ss(input);
-    string       line, tok;
+    const auto parse = [&](regex &reg) {
+        return vector<string>(
+            sregex_token_iterator(line.begin(), line.end(), reg),
+            sregex_token_iterator());
+    };
 
+    string         tok, name, sendListStr;
+    vector<string> sendList;
+    MODULETYPE     type = BROADCASTER;
+    size_t         idx  = 1;
+
+    // separate line into name, send list
+    regex rgx("[%]|[&]|[\\w]+");
+    auto  tokens = parse(rgx);
+    // set module type and name
+    type = (tokens[0][0] == '%')   ? FLIPFLOP
+           : (tokens[0][0] == '&') ? CONJUNCTION
+                                   : BROADCASTER;
+    name = (type != BROADCASTER) ? tokens[idx++] : "broadcaster";
+
+    // push outgoing modules into send list
+    for (; idx < tokens.size(); idx++)
+        sendList.push_back(tokens[idx]);
+
+    return {type, name, sendList};
+}
+
+unordered_map<string, Module> getModules(string input)
+{
+    stringstream                  ss(input);
+    string                        line;
     unordered_map<string, Module> modules;
 
     while (getline(ss, line))
     {
-        // separate line into name, send list
-        line.erase(remove_if(line.begin(), line.end(), ::isspace), line.end());
-        regex  rgx("(.*)->(.*)");
-        smatch matches;
-        regex_search(line, matches, rgx);
-        string         name        = matches[1].str();
-        string         sendListStr = matches[2].str();
-        stringstream   ssSendList(sendListStr);
-        vector<string> sendList;
-        while (getline(ssSendList, tok, ','))
-            sendList.push_back(tok);
-
-        // start pushing modules into table
-        if (line.starts_with("%"))
-            Module flipflop(name.substr(1), FLIPFLOP, sendList);
-        else if (line.starts_with("&"))
-            Module conjunction(name.substr(1), CONJUNCTION, sendList);
-        else
-            Module broadcast(name, BROADCASTER, sendList);
+        auto [type, from, to] = parseLine(line);
+        modules[from]         = Module(type, from, to);
     }
-    return 0;
+
+    ss.clear();
+    ss.str(input);
+    while (getline(ss, line))
+    {
+        auto [type, from, to] = parseLine(line);
+        for (auto sendTo : to)
+            modules[sendTo].registers[from] = LOW;
+    }
+
+    return modules;
+}
+
+class ProcessQueue
+{
+  public:
+    queue<tuple<PULSE, string, string>> q          = {};
+    uint64_t                            LOW_COUNT  = 0;
+    uint64_t                            HIGH_COUNT = 0;
+
+    void push(tuple<PULSE, string, string> event)
+    {
+        auto [input, from, to] = event;
+        (input == LOW) ? LOW_COUNT++ : HIGH_COUNT++;
+        q.push({input, from, to});
+    }
+
+    uint64_t res()
+    {
+#ifdef DEBUG
+        cout << "Low = " << LOW_COUNT << ", High = " << HIGH_COUNT << '\n';
+#endif
+        return LOW_COUNT * HIGH_COUNT;
+    }
+};
+
+void process(unordered_map<string, Module> &modules, ProcessQueue &PQ,
+             string from, PULSE input, string currMod)
+{
+    const auto flipflop = [&]() {
+        if (input == LOW)
+        {
+            // flip state
+            modules[currMod].state = (modules[currMod].state == STATE_OFF)
+                                         ? STATE_ON
+                                         : STATE_OFF;
+
+            if (modules[currMod].state == STATE_OFF)
+            {
+                for (auto sendTo : modules[currMod].to)
+                    PQ.push({LOW, currMod, sendTo});
+            }
+            else if (modules[currMod].state == STATE_ON)
+            {
+                for (auto sendTo : modules[currMod].to)
+                    PQ.push({HIGH, currMod, sendTo});
+            }
+        }
+    };
+
+    const auto conjunction = [&]() {
+        // update register
+        modules[currMod].registers[from] = input;
+        // check if all values are HI/LO
+        bool all_high = all_of(modules[currMod].registers.begin(),
+                               modules[currMod].registers.end(),
+                               [](auto &p) { return p.second == HIGH; });
+
+        if (all_high)
+        {
+            for (auto sendTo : modules[currMod].to)
+                PQ.push({LOW, currMod, sendTo});
+        }
+        else
+        {
+            for (auto sendTo : modules[currMod].to)
+                PQ.push({HIGH, currMod, sendTo});
+        }
+    };
+
+    switch (modules[currMod].type)
+    {
+    case BROADCASTER:
+        for (auto s : modules[currMod].to)
+            PQ.push({input, "broadcaster", s});
+        break;
+    case FLIPFLOP:
+        flipflop();
+        break;
+    case CONJUNCTION:
+        conjunction();
+        break;
+    }
+}
+
+static uint64_t solve_1(const string &input)
+{
+
+    auto modules = getModules(input);
+
+#ifdef DEBUG
+    for (auto [k, v] : modules)
+        cout << v << '\n';
+#endif
+
+    ProcessQueue processQueue;
+    for (int i = 0; i < 1000; i++)
+    {
+        processQueue.push({LOW, "button", "broadcaster"});
+
+        // Using a queue to process. We need to finish current jobs before
+        // moving to next one
+        while (!processQueue.q.empty())
+        {
+            auto [input, fromModule, toModule] = processQueue.q.front();
+#ifdef DEBUG
+            cout << fromModule << " -" << (input == LOW ? "low" : "high")
+                 << "-> " << toModule << '\n';
+#endif
+            processQueue.q.pop();
+            process(modules, processQueue, fromModule, input, toModule);
+        }
+
+#ifdef DEBUG
+        cout << '\n';
+#endif
+    }
+
+    return processQueue.res();
 }
 
 static uint64_t solve_2(const string &input)
