@@ -1,4 +1,5 @@
 #include "Day_20.hh"
+#include <numeric>
 
 // #define DEBUG
 
@@ -213,7 +214,49 @@ static uint64_t solve_1(const string &input)
 
 static uint64_t solve_2(const string &input)
 {
-    return 0;
+    auto                  modules = getModules(input);
+    string                nodeToRx;
+    map<string, uint64_t> cycles;
+
+    // find node-to-rx, and nodes to this node (nodeToRxPrev -> nodeToRx -> rx)
+    nodeToRx = modules["rx"].registers.begin()->first;
+    for (auto &nodeToRxPrev : modules[nodeToRx].registers)
+        cycles[nodeToRxPrev.first] = 0;
+
+    ProcessQueue processQueue;
+    for (int i = 0; i < INT_MAX; i++)
+    {
+        processQueue.push({LOW, "button", "broadcaster"});
+
+        // Using a queue to process. We need to finish current jobs before
+        // moving to next one
+        while (!processQueue.q.empty())
+        {
+            auto [input, fromModule, toModule] = processQueue.q.front();
+            processQueue.q.pop();
+
+            for (auto &[inNode, count] : cycles)
+            {
+                if (inNode == fromModule && toModule == nodeToRx &&
+                    input == HIGH)
+                {
+                    // found a cycle
+                    count = i + 1 - count;
+                }
+            }
+
+            process(modules, processQueue, fromModule, input, toModule);
+        }
+
+        if (all_of(cycles.begin(), cycles.end(),
+                   [](auto &c) { return c.second > 0; }))
+        {
+            return accumulate(cycles.begin(), cycles.end(), 1ull,
+                              [](auto a, auto &b) { return lcm(a, b.second); });
+        }
+    }
+
+    return processQueue.res();
 }
 
 TEST(Aoc2023Test_day20, Problem1)
@@ -229,8 +272,7 @@ TEST(Aoc2023Test_day20, Problem1)
 
 TEST(Aoc2023Test_day20, Problem2)
 {
-    string testStr = "test";
-    EXPECT_EQ(0, solve_2(testStr));
+    // no test for day-20
 }
 
 int day20(int argc, char **argv, string input, bool runTest)
