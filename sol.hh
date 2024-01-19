@@ -21,6 +21,7 @@
 #include "sol/Day_18/Day_18.hh"
 #include "sol/Day_19/Day_19.hh"
 #include "sol/Day_20/Day_20.hh"
+#include "sol/Day_21/Day_21.hh"
 // TMP_H
 
 unordered_map<int, int (*)(int, char **, string, bool)> dayMap = {
@@ -44,6 +45,7 @@ unordered_map<int, int (*)(int, char **, string, bool)> dayMap = {
     {18, &day18},
     {19, &day19},
     {20, &day20},
+    {21, &day21},
  // TMP_ENTRY
 };
 
